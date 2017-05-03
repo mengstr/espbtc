@@ -10,6 +10,7 @@ ESPTOOL     ?= /opt/esptool/esptool.py
 # Probably no need to change this
 FLASHPARAM  =  --flash_freq 80m --flash_mode dout
 FLASHBAUD   =  921600
+SERIALBAUD  =  74880
 
 # Name of the main source and also the name of firmwares
 TARGET      =  espbtc
@@ -25,12 +26,12 @@ CFLAGS      =  -Wall -DICACHE_FLASH -Iinclude -I./ -mlongcalls
 LDLIBS      =  -nostdlib -Wl,--start-group -lmain -lupgrade -ljson -lnet80211 -lwpa -llwip -lpp -lphy -Wl,--end-group -lcirom -lgcc 
 LDFLAGS     =  -Teagle.app.v6.ld
 
-.PHONY: all flash flashinit clean
+.PHONY: all flash serial flashinit clean
 
 # Remove "flash" from here is you don't want to auto-flash
 # after a successful compilation. Then you need to do a
 # manual "make flash" to upload
-all : $(TARGET).elf $(FW1) $(FW2) flash
+all : $(TARGET).elf $(FW1) $(FW2) flash serial
 
 # List of all required object modules. (I.E all your sources
 # with .c replaced with .o)
@@ -65,6 +66,9 @@ flash : $(FW0) $(FW1)
 		0x00000 $(FW0) \
 		0x10000 $(FW1) \
 		$(FLASHPARAM) > /dev/null
+
+serial:
+	@miniterm.py $(ESPPORT) $(SERIALBAUD)
 
 # This might be required to be run once on a brand new
 # ESP8266 unit. "make flashinit"
