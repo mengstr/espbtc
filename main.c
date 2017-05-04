@@ -92,8 +92,8 @@ void ICACHE_FLASH_ATTR NetworkTimerCB(void *arg) {
           } 
           HttpRequest(hostIp,"api.coindesk.com","/v1/bpi/currentprice.json");
         }
-        // Do the API lookup every 5 seconds
-        if (cnt++>10*5) cnt=0;
+        // Do the API lookup every 30 seconds
+        if (cnt++>10*30) cnt=0;
         break;
     }
 

@@ -6,6 +6,7 @@
 
 
 #include "4bittube.h"
+#include "jsonutils.h"
 #include "network.h"
 
 // Functions missing in SDK declarations :-(
