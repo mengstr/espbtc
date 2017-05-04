@@ -35,13 +35,14 @@ all : $(TARGET).elf $(FW1) $(FW2) flash serial
 
 # List of all required object modules. (I.E all your sources
 # with .c replaced with .o)
-OBJS = main.o 4bittube.o coindesk.o
+OBJS = main.o 4bittube.o network.o jsonutils.o
 
 # Specify which files each object depends on so it can be
 # automatically recompiled if any dependency changes.
-main.o: main.c 4bittube.h coindesk.h
+main.o: main.c 4bittube.h jsonutils.h
 4bittube.o: 4bittube.c 4bittube.h
-coindesk.o: coindesk.c coindesk.h
+jsonutils.o: jsonutils.c jsonutils.h
+network.o: network.c network.h
 
 # The lines below don't need to be changed, but the @ at the
 # start of the lines can be removed to show the commands

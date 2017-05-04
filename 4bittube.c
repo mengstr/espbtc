@@ -48,7 +48,7 @@ const uint8_t font4bit[]= {
 // while shifting instead of letting the caller handle
 // the inverted data
 //
-static void ShiftOut(uint8_t data) {
+static void ICACHE_FLASH_ATTR ShiftOut(uint8_t data) {
   uint8_t mask;
   for (mask=0x80; mask; mask>>=1) {
     if (data & mask) {
@@ -64,7 +64,7 @@ static void ShiftOut(uint8_t data) {
 //
 // Timer callback function that refreshes the LED display
 //
-void ledRefreshCB(void *arg) {
+void ICACHE_FLASH_ATTR ledRefreshCB(void *arg) {
   static uint8_t digit;
   uint8_t dc;
   uint8_t i;
@@ -119,3 +119,55 @@ uint8_t * ICACHE_FLASH_ATTR Init_4bittube(
   return displayBuf;
 }
 
+//
+/////////////////////////////////////////////////////////////////////////////
+// Functions added unique for this project below
+/////////////////////////////////////////////////////////////////////////////
+//
+
+//
+// Display a number 0.9999 on the display with leading-zero suppression
+//
+void ICACHE_FLASH_ATTR DisplayNumber(uint32_t num) {
+  // Cap number a maximum of 9999
+  if (num>9999) num=9999;
+
+  // The three first digits might be blank for leading
+  // zero suppression
+  *(displayBuf+2)=0x00;
+  *(displayBuf+1)=0x00;
+  *(displayBuf+0)=0x00;
+
+  // Only show numbers > 0 for the first thee digits
+  *(displayBuf+3)=font4bit[num%10];
+  if (num>9) *(displayBuf+2)=font4bit[(num/10)%10];
+  if (num>99) *(displayBuf+1)=font4bit[(num/100)%10];
+  if (num>999) *(displayBuf+0)=font4bit[(num/1000)%10];
+}
+
+//
+//
+//
+void ICACHE_FLASH_ATTR Display(uint8_t d0,uint8_t d1,uint8_t d2,uint8_t d3) {
+  *(displayBuf+0)=d0;
+  *(displayBuf+1)=d1;
+  *(displayBuf+2)=d2;
+  *(displayBuf+3)=d3;
+}
+
+//
+//
+//
+void ICACHE_FLASH_ATTR DisplayDots(uint8_t on) {
+  if (on) {
+    *(displayBuf+0)|=0x80;
+    *(displayBuf+1)|=0x80;
+    *(displayBuf+2)|=0x80;
+    *(displayBuf+3)|=0x80;
+  } else {
+    *(displayBuf+0)&=~0x80;
+    *(displayBuf+1)&=~0x80;
+    *(displayBuf+2)&=~0x80;
+    *(displayBuf+3)&=~0x80;
+  }
+}
